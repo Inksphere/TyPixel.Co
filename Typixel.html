@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creative Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(ellipse at top, #1a1a2e 0%, #0f0f23 45%, #000 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(34, 211, 238, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(232, 121, 249, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .neon-glow {
+            box-shadow: 
+                0 0 20px rgba(34, 211, 238, 0.3),
+                0 0 40px rgba(34, 211, 238, 0.2),
+                0 0 80px rgba(34, 211, 238, 0.1);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #22d3ee 0%, #e879f9 50%, #10b981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient-shift 3s ease-in-out infinite;
+        }
+        
+        @keyframes gradient-shift {
+            0%, 100% { filter: hue-rotate(0deg); }
+            50% { filter: hue-rotate(10deg); }
+        }
+        
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(34, 211, 238, 0.4);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 30px rgba(34, 211, 238, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .glass-effect {
+            backdrop-filter: blur(20px) saturate(180%);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .before-after-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 16px;
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .before-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            clip-path: polygon(0 0, var(--clip-position, 50%) 0, var(--clip-position, 50%) 100%, 0 100%);
+            filter: saturate(0.8) contrast(1.1);
+        }
+        
+        .after-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: saturate(1.2) contrast(1.1);
+        }
+        
+        .slider-handle {
+            position: absolute;
+            top: 0;
+            left: var(--handle-position, 50%);
+            transform: translateX(-50%);
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(to bottom, 
+                rgba(34, 211, 238, 0.9) 0%, 
+                rgba(255, 255, 255, 1) 50%, 
+                rgba(232, 121, 249, 0.9) 100%);
+            cursor: ew-resize;
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
+        }
+        
+        .slider-handle::before {
+            content: '⟷';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: white;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .slider-handle:hover::before {
+            background: rgba(34, 211, 238, 0.9);
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .portfolio-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .portfolio-card img {
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: saturate(0.9) contrast(1.1);
+        }
+        
+        .portfolio-card:hover img {
+            transform: scale(1.1);
+            filter: saturate(1.2) contrast(1.2) brightness(1.1);
+        }
+        
+        .portfolio-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, 
+                rgba(34, 211, 238, 0.1) 0%, 
+                rgba(0, 0, 0, 0.7) 50%, 
+                rgba(232, 121, 249, 0.1) 100%);
+            opacity: 0;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(2px);
+        }
+        
+        .portfolio-card:hover .portfolio-overlay {
+            opacity: 1;
+        }
+        
+        .portfolio-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem;
+            transform: translateY(30px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .portfolio-card:hover .portfolio-content {
+            transform: translateY(0);
+        }
+        
+        /* Advanced Button Styles */
+        .btn-primary {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #22d3ee 0%, #e879f9 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+        
+        .btn-secondary {
+            position: relative;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(34, 211, 238, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Floating Elements */
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        /* Animated Underlines */
+        .animated-underline {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .animated-underline::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #22d3ee, #e879f9);
+            transition: width 0.4s ease;
+        }
+        
+        .animated-underline:hover::after {
+            width: 100%;
+        }
+        
+        /* Pulse Effect */
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.4); }
+            70% { box-shadow: 0 0 0 20px rgba(34, 211, 238, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(34, 211, 238, 0); }
+        }
+        
+        /* Glitch Effect */
+        .glitch {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .glitch:hover::before,
+        .glitch:hover::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .glitch:hover::before {
+            animation: glitch-1 0.3s infinite;
+            color: #ff0040;
+            z-index: -1;
+        }
+        
+        .glitch:hover::after {
+            animation: glitch-2 0.3s infinite;
+            color: #00ffff;
+            z-index: -2;
+        }
+        
+        @keyframes glitch-1 {
+            0%, 14%, 15%, 49%, 50%, 99%, 100% { transform: translate(0, 0); }
+            15%, 49% { transform: translate(-2px, -2px); }
+        }
+        
+        @keyframes glitch-2 {
+            0%, 20%, 21%, 62%, 63%, 99%, 100% { transform: translate(0, 0); }
+            21%, 62% { transform: translate(2px, 2px); }
+        }
+        
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 9999;
+        }
+        
+        .scroll-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #22d3ee, #e879f9, #10b981);
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #22d3ee, #e879f9);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #e879f9, #22d3ee);
+        }
+        
+        /* Responsive Enhancements */
+        @media (max-width: 768px) {
+            .portfolio-content {
+                padding: 1rem;
+            }
+            
+            .slider-handle::before {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+            }
+            
+            .card-hover:hover {
+                transform: translateY(-4px) scale(1.01);
+            }
+        }
+        
+        /* Loading Animation */
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+        
+        .page-loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid #22d3ee;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="min-h-screen text-white">
+    
+    <!-- Header -->
+    <header class="fixed top-0 w-full z-50 bg-black/10 backdrop-blur-md border-b border-white/5">
+        <nav class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="text-xl font-bold gradient-text">Portfolio</div>
+            <div class="hidden md:flex space-x-8">
+                <a href="#about" class="hover:text-cyan-400 transition-colors">About</a>
+                <a href="#portfolio" class="hover:text-cyan-400 transition-colors">Work</a>
+                <a href="#skills" class="hover:text-cyan-400 transition-colors">Skills</a>
+                <a href="#contact" class="hover:text-cyan-400 transition-colors">Contact</a>
+            </div>
+            <button class="md:hidden">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="min-h-screen flex items-center justify-center pt-16">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <div class="fade-in">
+                <h1 class="text-4xl sm:text-6xl lg:text-7xl font-bold mb-6">
+                    Creative <span class="gradient-text">Designer</span>
+                    <br>& Developer<span class="text-cyan-400">▮</span>
+                </h1>
+                <p class="text-lg sm:text-xl text-white/60 max-w-2xl mx-auto mb-8">
+                    Crafting digital experiences that blend creativity with functionality. 
+                    Specializing in web design, UI/UX, and interactive development.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button class="px-8 py-3 bg-gradient-to-r from-cyan-400 to-fuchsia-400 rounded-full font-semibold text-black hover:scale-105 transition-transform neon-glow">
+                        View My Work
+                    </button>
+                    <button class="px-8 py-3 border border-white/20 rounded-full hover:border-cyan-400/40 transition-colors">
+                        Get In Touch
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-16 sm:py-24 border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="fade-in">
+                <h2 class="text-2xl sm:text-4xl font-bold text-white mb-8">
+                    About Me<span class="text-cyan-400">▮</span>
+                </h2>
+                <p class="text-white/60 max-w-2xl mb-12">
+                    I'm a passionate creative professional with expertise in both design and development. 
+                    My journey spans across visual design, user experience, and modern web technologies.
+                </p>
+                
+                <!-- Before/After Comparison -->
+                <div class="grid md:grid-cols-2 gap-8 mb-12">
+                    <div class="before-after-container rounded-2xl border border-white/10 bg-white/5" style="height: 300px;">
+                        <img src="https://images.unsplash.com/photo-1559070169-a3077159ee16?w=600&h=400&fit=crop" 
+                             alt="After" class="after-image">
+                        <img src="https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=600&h=400&fit=crop" 
+                             alt="Before" class="before-image" id="beforeImage">
+                        <div class="slider-handle" id="sliderHandle"></div>
+                        <input type="range" min="0" max="100" value="50" 
+                               class="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize" 
+                               id="slider">
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <h3 class="text-xl font-semibold mb-4">Design Transformation</h3>
+                        <p class="text-white/60 mb-4">
+                            See how I transform ideas into polished designs. This interactive slider 
+                            shows the before and after of a recent project.
+                        </p>
+                        <ul class="space-y-2 text-white/60">
+                            <li class="flex items-center gap-2">
+                                <span class="w-2 h-2 bg-cyan-400 rounded-full"></span>
+                                Modern UI/UX Design
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-2 h-2 bg-cyan-400 rounded-full"></span>
+                                Responsive Development
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-2 h-2 bg-cyan-400 rounded-full"></span>
+                                Performance Optimization
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="py-16 sm:py-24 border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="fade-in mb-12">
+                <h2 class="text-2xl sm:text-4xl font-bold text-white mb-4">
+                    Featured Work<span class="text-cyan-400">▮</span>
+                </h2>
+                <p class="text-white/60 max-w-2xl">
+                    A selection of projects showcasing my expertise in design, development, and creative problem-solving.
+                </p>
+            </div>
+            
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Portfolio Items -->
+                <div class="portfolio-card rounded-2xl bg-white/5 border border-white/10 card-hover fade-in">
+                    <img src="https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=400&h=300&fit=crop" 
+                         alt="E-commerce Platform" class="h-64 w-full object-cover">
+                    <div class="portfolio-overlay"></div>
+                    <div class="portfolio-content">
+                        <div class="flex items-center gap-2 text-xs text-white/70 mb-2">
+                            <span class="inline-block h-1.5 w-1.5 rounded-full bg-cyan-400"></span>
+                            Web Development
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-1">E-commerce Platform</h3>
+                        <p class="text-sm text-white/70">Modern shopping experience with seamless checkout</p>
+                    </div>
+                </div>
+
+                <div class="portfolio-card rounded-2xl bg-white/5 border border-white/10 card-hover fade-in">
+                    <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400&h=300&fit=crop" 
+                         alt="Mobile App Design" class="h-64 w-full object-cover">
+                    <div class="portfolio-overlay"></div>
+                    <div class="portfolio-content">
+                        <div class="flex items-center gap-2 text-xs text-white/70 mb-2">
+                            <span class="inline-block h-1.5 w-1.5 rounded-full bg-fuchsia-400"></span>
+                            UI/UX Design
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-1">Mobile App Design</h3>
+                        <p class="text-sm text-white/70">Intuitive interface for fitness tracking application</p>
+                    </div>
+                </div>
+
+                <div class="portfolio-card rounded-2xl bg-white/5 border border-white/10 card-hover fade-in">
+                    <img src="https://images.unsplash.com/photo-1558655146-364adaf1fcc9?w=400&h=300&fit=crop" 
+                         alt="Brand Identity" class="h-64 w-full object-cover">
+                    <div class="portfolio-overlay"></div>
+                    <div class="portfolio-content">
+                        <div class="flex items-center gap-2 text-xs text-white/70 mb-2">
+                            <span class="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+                            Branding
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-1">Brand Identity</h3>
+                        <p class="text-sm text-white/70">Complete visual identity for tech startup</p>
+                    </div>
+                </div>
+
+                <div class="portfolio-card rounded-2xl bg-white/5 border border-white/10 card-hover fade-in">
+                    <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=300&fit=crop" 
+                         alt="Data Dashboard" class="h-64 w-full object-cover">
+                    <div class="portfolio-overlay"></div>
+                    <div class="portfolio-content">
+                        <div class="flex items-center gap-2 text-xs text-white/70 mb-2">
+                            <span class="inline-block h-1.5 w-1.5 rounded-full bg-cyan-400"></span>
+                            Dashboard
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-1">Analytics Dashboard</h3>
+                        <p class="text-sm text-white/70">Real-time data visualization platform</p>
+                    </div>
+                </div>
+
+                <div class="portfolio-card rounded-2xl bg-white/5 border border-white/10 card-hover fade-in">
+                    <img src="https://images.unsplash.com/photo-1555099962-4199c345e5dd?w=400&h=300&fit=crop" 
+                         alt="Portfolio Website" class="h-64 w-full object-cover">
+                    <div class="portfolio-overlay"></div>
+                    <div class="portfolio-content">
+                        <div class="flex items-center gap-2 text-xs text-white/70 mb-2">
+                            <span class="inline-block h-1.5 w-1.5 rounded-full bg-fuchsia-400"></span>
+                            Web Design
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-1">Portfolio Website</h3>
+                        <p class="text-sm text-white/70">Creative showcase with interactive elements</p>
+                    </div>
+                </div>
+
+                <div class="portfolio-card rounded-2xl bg-white/5 border border-white/10 card-hover fade-in">
+                    <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400&h=300&fit=crop" 
+                         alt="3D Visualization" class="h-64 w-full object-cover">
+                    <div class="portfolio-overlay"></div>
+                    <div class="portfolio-content">
+                        <div class="flex items-center gap-2 text-xs text-white/70 mb-2">
+                            <span class="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+                            3D Design
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-1">3D Visualization</h3>
+                        <p class="text-sm text-white/70">Interactive product showcase experience</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="py-16 sm:py-24 border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="fade-in mb-12">
+                <h2 class="text-2xl sm:text-4xl font-bold text-white mb-4">
+                    Skills & Expertise<span class="text-cyan-400">▮</span>
+                </h2>
+                <p class="text-white/60 max-w-2xl">
+                    A comprehensive toolkit spanning design, development, and creative technologies.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="fade-in">
+                    <div class="bg-white/5 border border-white/10 rounded-2xl p-6 card-hover">
+                        <div class="w-12 h-12 bg-gradient-to-br from-cyan-400 to-fuchsia-400 rounded-xl flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">Design</h3>
+                        <ul class="space-y-2 text-white/60">
+                            <li>Adobe Photoshop</li>
+                            <li>Adobe Illustrator</li>
+                            <li>Adobe InDesign</li>
+                            <li>UI/UX Design</li>
+                            <li>Brand Identity</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="fade-in">
+                    <div class="bg-white/5 border border-white/10 rounded-2xl p-6 card-hover">
+                        <div class="w-12 h-12 bg-gradient-to-br from-fuchsia-400 to-emerald-400 rounded-xl flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M9.5 7.5L12 10l2.5-2.5V6h-5v1.5zM6 6v12h12V6H6zm0-2h12c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">Development</h3>
+                        <ul class="space-y-2 text-white/60">
+                            <li>HTML & CSS</li>
+                            <li>JavaScript</li>
+                            <li>React & Next.js</li>
+                            <li>Node.js</li>
+                            <li>Responsive Design</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="fade-in">
+                    <div class="bg-white/5 border border-white/10 rounded-2xl p-6 card-hover">
+                        <div class="w-12 h-12 bg-gradient-to-br from-emerald-400 to-cyan-400 rounded-xl flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">Tools & Workflow</h3>
+                        <ul class="space-y-2 text-white/60">
+                            <li>Figma & Sketch</li>
+                            <li>Git & Version Control</li>
+                            <li>Adobe Creative Suite</li>
+                            <li>Performance Optimization</li>
+                            <li>Cross-browser Testing</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-16 sm:py-24">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="fade-in text-center">
+                <h2 class="text-2xl sm:text-4xl font-bold text-white mb-4">
+                    Let's Work Together<span class="text-cyan-400">▮</span>
+                </h2>
+                <p class="text-white/60 max-w-2xl mx-auto mb-12">
+                    Ready to bring your vision to life? Let's discuss your project and create something amazing together.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+                    <a href="mailto:hello@example.com" 
+                       class="px-8 py-3 bg-gradient-to-r from-cyan-400 to-fuchsia-400 rounded-full font-semibold text-black hover:scale-105 transition-transform neon-glow">
+                        Get In Touch
+                    </a>
+                    <a href="#" 
+                       class="px-8 py-3 border border-white/20 rounded-full hover:border-cyan-400/40 transition-colors">
+                        Download Resume
+                    </a>
+                </div>
+
+                <!-- Social Links -->
+                <div class="flex justify-center space-x-6">
+                    <a href="#" class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center hover:border-cyan-400/40 transition-colors">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center hover:border-cyan-400/40 transition-colors">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.097.118.112.222.082.343-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.750-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24.009c6.624 0 11.99-5.367 11.99-11.988C24.007 5.367 18.641.001 12.017.001z"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center hover:border-cyan-400/40 transition-colors">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center hover:border-cyan-400/40 transition-colors">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/5 py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center text-white/60">
+            <p>&copy; 2024 Creative Portfolio. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all fade-in elements
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Before/After Slider functionality
+        const slider = document.getElementById('slider');
+        const beforeImage = document.getElementById('beforeImage');
+        const sliderHandle = document.getElementById('sliderHandle');
+
+        if (slider && beforeImage && sliderHandle) {
+            function updateSlider(value) {
+                beforeImage.style.setProperty('--clip-position', `${value}%`);
+                sliderHandle.style.setProperty('--handle-position', `${value}%`);
+            }
+
+            slider.addEventListener('input', (e) => {
+                updateSlider(e.target.value);
+            });
+
+            // Touch/mouse events for better interaction
+            let isDragging = false;
+
+            slider.addEventListener('mousedown', () => isDragging = true);
+            document.addEventListener('mouseup', () => isDragging = false);
+            
+            slider.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    const rect = slider.getBoundingClientRect();
+                    const percentage = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
+                    slider.value = percentage;
+                    updateSlider(percentage);
+                }
+            });
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Header background on scroll
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+            } else {
+                header.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
+            }
+        });
+
+        // Mobile menu toggle
+        const mobileMenuButton = document.querySelector('button.md\\:hidden');
+        const mobileMenu = document.querySelector('.hidden.md\\:flex');
+        
+        if (mobileMenuButton) {
+            mobileMenuButton.addEventListener('click', () => {
+                // Create mobile menu if it doesn't exist
+                let existingMobileMenu = document.querySelector('.mobile-menu');
+                
+                if (!existingMobileMenu) {
+                    const mobileMenuHTML = `
+                        <div class="mobile-menu fixed inset-0 z-40 bg-black/95 backdrop-blur-md transform translate-x-full transition-transform duration-300">
+                            <div class="flex flex-col items-center justify-center h-full space-y-8 text-xl">
+                                <a href="#about" class="hover:text-cyan-400 transition-colors">About</a>
+                                <a href="#portfolio" class="hover:text-cyan-400 transition-colors">Work</a>
+                                <a href="#skills" class="hover:text-cyan-400 transition-colors">Skills</a>
+                                <a href="#contact" class="hover:text-cyan-400 transition-colors">Contact</a>
+                                <button class="close-menu absolute top-6 right-6 text-2xl">&times;</button>
+                            </div>
+                        </div>
+                    `;
+                    document.body.insertAdjacentHTML('beforeend', mobileMenuHTML);
+                    existingMobileMenu = document.querySelector('.mobile-menu');
+                    
+                    // Add close functionality
+                    existingMobileMenu.querySelector('.close-menu').addEventListener('click', () => {
+                        existingMobileMenu.style.transform = 'translateX(100%)';
+                    });
+                    
+                    // Close on link click
+                    existingMobileMenu.querySelectorAll('a').forEach(link => {
+                        link.addEventListener('click', () => {
+                            existingMobileMenu.style.transform = 'translateX(100%)';
+                        });
+                    });
+                }
+                
+                existingMobileMenu.style.transform = 'translateX(0)';
+            });
+        }
+
+        // Add some dynamic effects
+        document.addEventListener('mousemove', (e) => {
+            const cursor = document.querySelector('.cursor-glow');
+            if (!cursor) {
+                const cursorGlow = document.createElement('div');
+                cursorGlow.className = 'cursor-glow fixed pointer-events-none z-50 w-96 h-96 rounded-full opacity-5';
+                cursorGlow.style.background = 'radial-gradient(circle, rgba(34,211,238,0.15) 0%, transparent 70%)';
+                cursorGlow.style.transform = 'translate(-50%, -50%)';
+                document.body.appendChild(cursorGlow);
+            }
+            
+            const cursorElement = document.querySelector('.cursor-glow');
+            cursorElement.style.left = e.clientX + 'px';
+            cursorElement.style.top = e.clientY + 'px';
+        });
+
+        // Parallax effect for hero section
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const heroSection = document.querySelector('section');
+            if (heroSection) {
+                heroSection.style.transform = `translateY(${scrolled * 0.5}px)`;
+            }
+        });
+
+        // Add loading animation
+        window.addEventListener('load', () => {
+            document.body.classList.add('loaded');
+            
+            // Trigger initial fade-in for elements in viewport
+            setTimeout(() => {
+                document.querySelectorAll('.fade-in').forEach(el => {
+                    const rect = el.getBoundingClientRect();
+                    if (rect.top < window.innerHeight && rect.bottom > 0) {
+                        el.classList.add('visible');
+                    }
+                });
+            }, 100);
+        });
+
+        // Add some interactive sparkles/particles
+        function createSparkle() {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle fixed pointer-events-none z-10';
+            sparkle.style.cssText = `
+                width: 4px;
+                height: 4px;
+                background: linear-gradient(45deg, #22d3ee, #e879f9);
+                border-radius: 50%;
+                opacity: 0;
+                animation: sparkle-float 3s ease-out forwards;
+            `;
+            
+            sparkle.style.left = Math.random() * window.innerWidth + 'px';
+            sparkle.style.top = Math.random() * window.innerHeight + 'px';
+            
+            document.body.appendChild(sparkle);
+            
+            setTimeout(() => {
+                sparkle.remove();
+            }, 3000);
+        }
+
+        // Add sparkle animation CSS
+        const sparkleStyles = document.createElement('style');
+        sparkleStyles.textContent = `
+            @keyframes sparkle-float {
+                0% {
+                    opacity: 0;
+                    transform: translateY(0) scale(0);
+                }
+                50% {
+                    opacity: 1;
+                    transform: translateY(-100px) scale(1);
+                }
+                100% {
+                    opacity: 0;
+                    transform: translateY(-200px) scale(0);
+                }
+            }
+            
+            .loaded {
+                animation: page-load 1s ease-out;
+            }
+            
+            @keyframes page-load {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+        `;
+        document.head.appendChild(sparkleStyles);
+
+        // Create sparkles occasionally
+        setInterval(createSparkle, 2000);
+    </script>
+</body>
+</html>
